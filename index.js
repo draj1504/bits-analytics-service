@@ -1,10 +1,10 @@
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const { Pool } = require('pg');
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const { Pool } = require("pg");
 
 const app = express();
-const port = 4003; // different from task & notification services
+const PORT = process.env.PORT || 4003; // different from task & notification services
 
 app.use(cors());
 app.use(express.json());
@@ -14,14 +14,14 @@ const db = new Pool({
   password: process.env.DB_PASSWORD,
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
-  database: 'taskdb'
+  database: "taskdb",
 });
 // Test route
-app.get('/', (req, res) => {
-  res.send('Analytics Service is running');
+app.get("/", (req, res) => {
+  res.send("Analytics Service is running");
 });
 
-app.get('/analytics/task-status', async (req, res) => {
+app.get("/analytics/task-status", async (req, res) => {
   try {
     const result = await db.query(`
       SELECT status, COUNT(*) as count
@@ -30,13 +30,13 @@ app.get('/analytics/task-status', async (req, res) => {
     `);
     res.json(result.rows);
   } catch (err) {
-    console.error('Error fetching task status counts:', err);
-    res.status(500).send('Internal Server Error');
+    console.error("Error fetching task status counts:", err);
+    res.status(500).send("Internal Server Error");
   }
 });
 
 // In analytics-service (Express server)
-app.get('/analytics/tasks-per-assignee', async (req, res) => {
+app.get("/analytics/tasks-per-assignee", async (req, res) => {
   try {
     const result = await db.query(`
       SELECT assignee, COUNT(*) as count
@@ -45,14 +45,13 @@ app.get('/analytics/tasks-per-assignee', async (req, res) => {
     `);
     res.json(result.rows);
   } catch (err) {
-    console.error('Error fetching analytics:', err);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Error fetching analytics:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
-
-app.listen(port, () => {
-  console.log(`Analytics Service running on http://localhost:${port}`);
+app.listen(PORT, () => {
+  console.log(`Analytics Service running on http://localhost:${PORT}`);
 });
 
 module.exports = { app, db };
