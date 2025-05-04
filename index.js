@@ -14,7 +14,7 @@ const db = new Pool({
   password: process.env.DB_PASSWORD,
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
-  database: "taskdb",
+  database: process.env.DB_NAME,
 });
 // Test route
 app.get("/", (req, res) => {
